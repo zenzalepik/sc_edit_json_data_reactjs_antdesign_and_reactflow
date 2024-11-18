@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/index.css';
-import OrgChartApp from './form/OrgChartApp';
 import EmployeeTable from './form/EmployeeTable';
+import OrgChart from './form/OrgChart';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,5 +10,6 @@ root.render(
     {/* <App /> */}
     {/* <OrgChartApp /> */}
     <EmployeeTable />
+    <OrgChart />
   </React.StrictMode>
 );
