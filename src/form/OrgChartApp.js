@@ -5,39 +5,8 @@ import { nodes as initialNodes, edges as initialEdges } from '../nodes-edges'; /
 import { Button, message } from 'antd';
 import '@xyflow/react/dist/style.css';
 import dagre from 'dagre'; // Import dagre untuk auto-layout
+import {getLayoutedElements} from './Layout';
 
-// Fungsi untuk menerapkan auto-layout menggunakan dagre
-const getLayoutedElements = (nodes, edges) => {
-  const graph = new dagre.graphlib.Graph();
-
-  graph.setGraph({});
-  graph.setDefaultEdgeLabel(() => ({}));
-
-  // Menambahkan node ke graph
-  nodes.forEach((node) => {
-    graph.setNode(node.id, { width: 172, height: 120 }); // Tentukan ukuran node
-  });
-
-  // Menambahkan edges ke graph
-  edges.forEach((edge) => {
-    graph.setEdge(edge.source, edge.target);
-  });
-
-  // Mengatur layout otomatis menggunakan dagre
-  dagre.layout(graph);
-
-  // Menata ulang posisi nodes berdasarkan layout yang dihitung
-  nodes = nodes.map((node) => {
-    const nodeWithPosition = graph.node(node.id);
-    node.position = {
-      x: nodeWithPosition.x - 172 / 2, // Menggeser agar node di tengah
-      y: nodeWithPosition.y - 36 / 2,
-    };
-    return node;
-  });
-
-  return { nodes, edges };
-};
 
 const OrgChartApp = () => {
   const [nodes, setNodes] = useState(initialNodes); // State untuk nodes
