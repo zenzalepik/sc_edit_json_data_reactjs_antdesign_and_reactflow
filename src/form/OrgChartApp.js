@@ -2,19 +2,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ReactFlowProvider, ReactFlow, MiniMap, Controls, Handle, Background } from '@xyflow/react'; // Import komponen dari @xyflow/react
 import { nodes as initialNodes, edges as initialEdges } from '../data/nodes-edges'; // Import data nodes dan edges
-import { Button, message } from 'antd';
+import { Button, message, Slider } from 'antd';
 import '@xyflow/react/dist/style.css';
 import dagre from 'dagre'; // Import dagre untuk auto-layout
 import {getLayoutedElements} from './Layout';
 import AddEmployeeModal from './AddEmployeeModal'; // Import modal
-
+import html2canvas from 'html2canvas'; // Import html2canvas
 
 const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
   // const [nodes, setNodes] = useState(initialNodes); // State untuk nodes
   // const [edges, setEdges] = useState(initialEdges); // State untuk edges
   const layoutApplied = useRef(false); // Ref untuk menyimpan apakah layout sudah diterapkan
+  const reactFlowWrapper = useRef(null);  // Referensi wrapper untuk ReactFlow
 
-  
+  const [scale, setScale] = useState(1);  // State untuk mengatur skala gambar
+
   // Fungsi untuk menangani penambahan karyawan
   const handleAddEmployee = (newEmployeeNode, newEdge) => {
     const updatedNodes = [...nodes, newEmployeeNode]; // Menambahkan node baru
@@ -48,12 +50,53 @@ const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
     }
   }, [nodes, edges]);
   
+  // Fungsi untuk mengekspor gambar menggunakan html2canvas
+  const downloadImage = () => {
+    if (!reactFlowWrapper.current) return;
+  
+    // Gunakan html2canvas untuk menangkap konten dengan peningkatan resolusi
+    html2canvas(reactFlowWrapper.current, {
+      scale: 2, // Menetapkan skala 2x untuk meningkatkan resolusi
+    }).then((canvas) => {
+      // Konversi canvas menjadi data URL (PNG)
+      const image = canvas.toDataURL('image/png');
+  
+      // Buat elemen anchor untuk mengunduh gambar
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = 'org-chart.png'; // Nama file yang akan diunduh
+      link.click();
+    }).catch((err) => {
+      message.error('Gagal mengekspor gambar');
+    });
+  };
+  
 
   return (
     <ReactFlowProvider>
-      <div style={{ height: '100vh', width: '100vw' }}>
+      <div style={{ height: '100vh', width: '100vw' }} ref={reactFlowWrapper}>
         {/* Komponen AddEmployeeModal yang menampilkan tombol dan modal */}
         <AddEmployeeModal onAddEmployee={handleAddEmployee} />
+        <div>
+        {/* Slider untuk memilih skala (resolusi) gambar */}
+        <Slider
+          min={1}
+          max={4}
+          step={0.1}
+          value={scale}
+          onChange={setScale}
+          tooltipVisible
+          style={{ width: 200 }}
+        />
+        <span>Scale: {scale}x</span>
+      </div>
+        <Button
+          type="primary"
+          onClick={downloadImage}
+          style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}
+        >
+          Download Image
+        </Button>
         <ReactFlow
           nodes={nodes}
           edges={edges}

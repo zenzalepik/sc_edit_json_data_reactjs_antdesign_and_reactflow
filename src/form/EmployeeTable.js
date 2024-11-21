@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Input, Button, Modal, Form, Select } from "antd";
 // import { nodes as initialNodes, edges as initialEdges } from "../data/nodes-edges";
+import { getLayoutedElements } from './Layout';  // Pastikan impor ini benar
 
 function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -66,6 +67,11 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
         });
       }
       setEdges(newEdges); // Update state edges dengan array baru
+
+      // Setelah update, terapkan layout otomatis
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, newEdges);
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
     }
 
     updateEmployee(values);
