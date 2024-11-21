@@ -5,8 +5,9 @@ import { Table, Input, Button, Modal, Form, Select } from "antd";
 import { getLayoutedElements } from "./Layout"; // Pastikan impor ini benar
 import { useOrgChartContext } from "../state/OrgChartContext"; // Mengakses context
 
-function EmployeeTable({  }) {
-  const { nodes, setNodes, edges, setEdges, reactFlowWrapper } = useOrgChartContext(); // Mengakses context
+function EmployeeTable({}) {
+  const { nodes, setNodes, edges, setEdges, reactFlowWrapper } =
+    useOrgChartContext(); // Mengakses context
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLeader, setNewLeader] = useState("");
@@ -78,13 +79,13 @@ function EmployeeTable({  }) {
 
       // Memastikan reflow atau rendering ulang dengan reactFlowWrapper
       if (reactFlowWrapper.current) {
+        closeModal();
         // Memaksa ReactFlow untuk rerender atau update jika ada perubahan pada nodes dan edges
         reactFlowWrapper.current.fitView();
       }
     }
 
     updateEmployee(values);
-    closeModal();
   };
 
   const updateEmployee = (values) => {
