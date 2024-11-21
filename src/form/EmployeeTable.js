@@ -3,20 +3,18 @@ import React, { useState, useEffect } from "react";
 import { Table, Input, Button, Modal, Form, Select } from "antd";
 // import { nodes as initialNodes, edges as initialEdges } from "../data/nodes-edges";
 
-
 function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLeader, setNewLeader] = useState("");
   const [form] = Form.useForm();
 
-
   // Fungsi untuk membuka modal dan set karyawan yang dipilih
   const openModal = (employeeId) => {
     const employee = nodes.find((node) => node.id === employeeId);
     setSelectedEmployee(employee);
     setIsModalOpen(true);
-  
+
     // Cari pimpinan dari edges yang sesuai
     const leaderEdge = edges.find((edge) => edge.target === employeeId);
     if (leaderEdge) {
@@ -25,15 +23,18 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
     } else {
       setNewLeader("");
     }
-  
+
     // Set nilai pada form saat modal dibuka
     form.setFieldsValue({
       name: employee.data.name,
       position: employee.data.position,
-      leader: leaderEdge ? (leaderEdge.source ? nodes.find((node) => node.id === leaderEdge.source)?.data.name : "") : "",
+      leader: leaderEdge
+        ? leaderEdge.source
+          ? nodes.find((node) => node.id === leaderEdge.source)?.data.name
+          : ""
+        : "",
     });
   };
-  
 
   // Fungsi untuk menutup modal
   const closeModal = () => {
@@ -45,11 +46,11 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
   // Fungsi untuk mengupdate pimpinan
   const updateLeader = (values) => {
     if (!selectedEmployee || !values.leader) return;
-  
+
     const newLeaderId = nodes.find(
       (node) => node.data.name === values.leader
     )?.id;
-  
+
     if (newLeaderId) {
       const newEdges = [...edges]; // Salin edges ke array baru
       const existingEdge = newEdges.find(
@@ -66,15 +67,14 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
       }
       setEdges(newEdges); // Update state edges dengan array baru
     }
-  
+
     updateEmployee(values);
     closeModal();
   };
-  
 
   const updateEmployee = (values) => {
     if (!selectedEmployee) return;
-  
+
     const updatedNodes = nodes.map((node) => {
       if (node.id === selectedEmployee.id) {
         return {
@@ -88,11 +88,23 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
       }
       return node;
     });
-  
+
     setNodes(updatedNodes); // Update state nodes dengan array baru
   };
-  
-  
+
+  // Fungsi untuk menghapus employee
+  const deleteEmployee = (employeeId) => {
+    // Hapus node yang sesuai
+    const updatedNodes = nodes.filter((node) => node.id !== employeeId);
+
+    // Hapus edges yang terkait dengan employee yang akan dihapus
+    const updatedEdges = edges.filter(
+      (edge) => edge.source !== employeeId && edge.target !== employeeId
+    );
+
+    setNodes(updatedNodes);
+    setEdges(updatedEdges);
+  };
 
   const columns = [
     {
@@ -120,9 +132,14 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Button type="primary" onClick={() => openModal(record.id)}>
-          Update Leader
-        </Button>
+        <>
+          <Button type="primary" onClick={() => openModal(record.id)}>
+            Update Leader
+          </Button>
+          <Button type="danger" onClick={() => deleteEmployee(record.id)}>
+            Delete
+          </Button>
+        </>
       ),
     },
   ];
