@@ -1,14 +1,27 @@
+import React, { useState } from 'react';
 import OrgChartApp from "./form/OrgChartApp";
 import EmployeeTable from "./form/EmployeeTable";
+import { nodes as initialNodes, edges as initialEdges } from './data/nodes-edges'; // Import data nodes dan edges
 
 const StrukturOrganisasiPage = () => {
-  return (
+
+  const [nodes, setNodes] = useState(initialNodes);  // State nodes
+  const [edges, setEdges] = useState(initialEdges);  // State edges
+  // Fungsi untuk menambahkan karyawan baru
+  const handleAddEmployee = (newEmployeeNode, newEdge) => {
+    const updatedNodes = [...nodes, newEmployeeNode];
+    const updatedEdges = newEdge ? [...edges, newEdge] : edges;
+
+    setNodes(updatedNodes);  // Update nodes
+    setEdges(updatedEdges);  // Update edges
+  };
+    return (
     <div
       className="flex flex-row"
       style={{ width: "100%", minHeight: "100vh" }}
     >
-      <EmployeeTable />
-      <OrgChartApp />
+      <EmployeeTable nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} onAddEmployee={handleAddEmployee} />
+      <OrgChartApp nodes={nodes} edges={edges} setNodes={setNodes} setEdges={setEdges} onAddEmployee={handleAddEmployee} />
     </div>
   );
 };

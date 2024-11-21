@@ -1,15 +1,18 @@
 // src/components/EmployeeTable.js
 import React, { useState, useEffect } from "react";
 import { Table, Input, Button, Modal, Form, Select } from "antd";
-// import { nodes as initialNodes, edges as initialEdges } from "../data/nodes-edges";
+import { nodes as initialNodes, edges as initialEdges } from "../data/nodes-edges";
 
 
-function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
+function EmployeeTable() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLeader, setNewLeader] = useState("");
   const [form] = Form.useForm();
 
+
+  const [nodes, setNodes] = useState(initialNodes); // State for nodes
+  const [edges, setEdges] = useState(initialEdges); // State for edges
 
   // Fungsi untuk membuka modal dan set karyawan yang dipilih
   const openModal = (employeeId) => {

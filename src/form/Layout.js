@@ -30,16 +30,18 @@ export const getLayoutedElements = (nodes, edges) => {
     dagre.layout(graph);
   
     // Menata ulang posisi nodes berdasarkan layout yang dihitung
-    nodes = nodes.map((node) => {
-      const nodeWithPosition = graph.node(node.id);
-      node.position = {
-        x: nodeWithPosition.x - nodeWithPosition.width / 2, // Menyesuaikan agar node berada di tengah
+  const layoutedNodes = nodes.map((node) => {
+    const nodeWithPosition = graph.node(node.id);
+    return {
+      ...node,
+      position: {
+        x: nodeWithPosition.x - nodeWithPosition.width / 2,
         y: nodeWithPosition.y - nodeWithPosition.height / 2,
-      };
-      node.width = nodeWithPosition.width;  // Menetapkan width otomatis
-      node.height = nodeWithPosition.height; // Menetapkan height otomatis
-      return node;
-    });
-  
-    return { nodes, edges };
+      },
+      width: nodeWithPosition.width,
+      height: nodeWithPosition.height
+    };
+  });
+
+  return { nodes: layoutedNodes, edges };
   };

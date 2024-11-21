@@ -1,20 +1,19 @@
 //src/form/OrgChartApp.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactFlowProvider, ReactFlow, MiniMap, Controls, Handle, Background } from '@xyflow/react'; // Import komponen dari @xyflow/react
 import { nodes as initialNodes, edges as initialEdges } from '../data/nodes-edges'; // Import data nodes dan edges
 import { Button, message } from 'antd';
 import '@xyflow/react/dist/style.css';
 import dagre from 'dagre'; // Import dagre untuk auto-layout
-import {getLayoutedElements} from './Layout';
+import {layoutGraph} from './Layout';
+
 import AddEmployeeModal from './AddEmployeeModal'; // Import modal
 
 
-const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
-  // const [nodes, setNodes] = useState(initialNodes); // State untuk nodes
-  // const [edges, setEdges] = useState(initialEdges); // State untuk edges
-  const layoutApplied = useRef(false); // Ref untuk menyimpan apakah layout sudah diterapkan
+const OrgChartApp = () => {
+  const [nodes, setNodes] = useState(initialNodes); // State untuk nodes
+  const [edges, setEdges] = useState(initialEdges); // State untuk edges
 
-  
   // Fungsi untuk menangani penambahan karyawan
   const handleAddEmployee = (newEmployeeNode, newEdge) => {
     const updatedNodes = [...nodes, newEmployeeNode]; // Menambahkan node baru
@@ -25,29 +24,16 @@ const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
     setEdges(updatedEdges);
 
     // Menjalankan auto layout setelah penambahan karyawan
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(updatedNodes, updatedEdges);
+    const { nodes: layoutedNodes, edges: layoutedEdges } = layoutGraph(updatedNodes, updatedEdges);
     setNodes(layoutedNodes); // Update posisi nodes
     setEdges(layoutedEdges); // Update posisi edges
-
-    // Menjalankan auto layout hanya sekali setelah penambahan
-    if (!layoutApplied.current) {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(updatedNodes, updatedEdges);
-      setNodes(layoutedNodes); // Update posisi nodes
-      setEdges(layoutedEdges); // Update posisi edges
-      layoutApplied.current = true; // Tandai bahwa layout telah diterapkan
-    }
   };
 
   useEffect(() => {
-    // Layouting otomatis hanya jika belum diterapkan
-    if (!layoutApplied.current) {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges);
-      setNodes(layoutedNodes);
-      setEdges(layoutedEdges);
-      layoutApplied.current = true; // Tandai bahwa layout telah diterapkan
-    }
-  }, [nodes, edges]);
-  
+    const { nodes: layoutedNodes, edges: layoutedEdges } = layoutGraph(nodes, edges);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+  }, [nodes, edges]); // Setiap kali nodes atau edges berubah, jalankan layout ulang
 
   return (
     <ReactFlowProvider>
@@ -70,7 +56,6 @@ const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
 
 // Komponen custom node dengan handle
 const CustomNode = ({ data, isConnectable }) => {
-  console.log('Rendering CustomNode:', data.name); // Cek render node
   return (
     <div style={{
       padding: '10px',
@@ -89,7 +74,7 @@ const CustomNode = ({ data, isConnectable }) => {
         position="top" // Tempatkan handle di atas node
         style={{
           left: '50%', // Menempatkan handle di tengah horizontal
-          transform: 'translateX(-50%)', // Mengubah posisi agar berada tepat di tengah
+          // transform: 'translateX(-50%)', // Mengubah posisi agar berada tepat di tengah
           background: '#555',
         }}
         isConnectable={isConnectable} // Mengaktifkan koneksi
@@ -101,7 +86,7 @@ const CustomNode = ({ data, isConnectable }) => {
         position="bottom" // Tempatkan handle di bawah node
         style={{
           left: '50%', // Menempatkan handle di tengah horizontal
-          transform: 'translateX(-50%)', // Mengubah posisi agar berada tepat di tengah
+          // transform: 'translateX(-50%)', // Mengubah posisi agar berada tepat di tengah
           background: '#555',
         }}
         isConnectable={isConnectable} // Mengaktifkan koneksi
