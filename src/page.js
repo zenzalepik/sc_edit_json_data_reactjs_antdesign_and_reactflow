@@ -15,6 +15,7 @@ const StrukturOrganisasiPage = () => {
     setNodes(updatedNodes);  // Update nodes
     setEdges(updatedEdges);  // Update edges
   };
+  
     return (
     <div
       className="flex flex-row"

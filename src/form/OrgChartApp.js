@@ -17,6 +17,32 @@ const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
 
   const [scale, setScale] = useState(1);  // State untuk mengatur skala gambar
 
+  // Fungsi untuk mengedit karyawan
+  const handleEditEmployee = (updatedEmployeeNode, updatedEdge) => {
+    // Mencari dan mengganti node yang sudah ada berdasarkan ID
+    const updatedNodes = nodes.map((node) =>
+      node.id === updatedEmployeeNode.id ? updatedEmployeeNode : node
+    );
+
+    // Mencari dan mengganti edge yang sudah ada berdasarkan ID
+    const updatedEdges = edges.map((edge) =>
+      edge.id === updatedEdge.id ? updatedEdge : edge
+    );
+
+    setNodes(updatedNodes);
+    setEdges(updatedEdges);
+
+    // Terapkan auto layout setelah pembaruan karyawan
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(updatedNodes, updatedEdges);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+
+    // Menjalankan auto layout hanya sekali setelah edit
+    if (!layoutApplied.current) {
+      layoutApplied.current = true; // Tandai bahwa layout telah diterapkan
+    }
+  };
+  
   // Fungsi untuk menangani penambahan karyawan
   const handleAddEmployee = (newEmployeeNode, newEdge) => {
     const updatedNodes = [...nodes, newEmployeeNode]; // Menambahkan node baru
