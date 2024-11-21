@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { Table, Input, Button, Modal, Form, Select } from "antd";
 // import { nodes as initialNodes, edges as initialEdges } from "../data/nodes-edges";
-import { getLayoutedElements } from './Layout';  // Pastikan impor ini benar
+import { getLayoutedElements } from "./Layout"; // Pastikan impor ini benar
+import { useOrgChartContext } from "../state/OrgChartContext"; // Mengakses context
 
-function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
+function EmployeeTable({  }) {
+  const { nodes, setNodes, edges, setEdges, reactFlowWrapper } = useOrgChartContext(); // Mengakses context
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLeader, setNewLeader] = useState("");
@@ -39,9 +41,9 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
 
   // Fungsi untuk menutup modal
   const closeModal = () => {
-    setIsModalOpen(false);
     setNewLeader("");
     form.resetFields();
+    setIsModalOpen(false);
   };
 
   // Fungsi untuk mengupdate pimpinan
@@ -69,9 +71,16 @@ function EmployeeTable({ nodes, edges, setNodes, setEdges, onAddEmployee }) {
       setEdges(newEdges); // Update state edges dengan array baru
 
       // Setelah update, terapkan layout otomatis
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, newEdges);
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(nodes, newEdges);
       setNodes(layoutedNodes);
       setEdges(layoutedEdges);
+
+      // Memastikan reflow atau rendering ulang dengan reactFlowWrapper
+      if (reactFlowWrapper.current) {
+        // Memaksa ReactFlow untuk rerender atau update jika ada perubahan pada nodes dan edges
+        reactFlowWrapper.current.fitView();
+      }
     }
 
     updateEmployee(values);

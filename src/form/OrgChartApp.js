@@ -1,48 +1,24 @@
 //src/form/OrgChartApp.js
 import React, { useState, useEffect, useRef } from 'react';
 import { ReactFlowProvider, ReactFlow, MiniMap, Controls, Handle, Background } from '@xyflow/react'; // Import komponen dari @xyflow/react
-import { nodes as initialNodes, edges as initialEdges } from '../data/nodes-edges'; // Import data nodes dan edges
+// import { nodes as initialNodes, edges as initialEdges } from '../data/nodes-edges'; // Import data nodes dan edges
 import { Button, message, Slider } from 'antd';
 import '@xyflow/react/dist/style.css';
 import dagre from 'dagre'; // Import dagre untuk auto-layout
 import {getLayoutedElements} from './Layout';
 import AddEmployeeModal from './AddEmployeeModal'; // Import modal
 import html2canvas from 'html2canvas'; // Import html2canvas
+import { useOrgChartContext } from '../state/OrgChartContext'; // Impor context
 
-const OrgChartApp = ({ nodes, edges, setNodes, setEdges, onAddEmployee }) => {
+const OrgChartApp = ({   }) => {
+  const {reactFlowWrapper,nodes, edges, setNodes, setEdges, onAddEmployee}= useOrgChartContext();
   // const [nodes, setNodes] = useState(initialNodes); // State untuk nodes
   // const [edges, setEdges] = useState(initialEdges); // State untuk edges
   const layoutApplied = useRef(false); // Ref untuk menyimpan apakah layout sudah diterapkan
-  const reactFlowWrapper = useRef(null);  // Referensi wrapper untuk ReactFlow
+  // const reactFlowWrapper = useRef(null);  // Referensi wrapper untuk ReactFlow
 
   const [scale, setScale] = useState(1);  // State untuk mengatur skala gambar
 
-  // Fungsi untuk mengedit karyawan
-  const handleEditEmployee = (updatedEmployeeNode, updatedEdge) => {
-    // Mencari dan mengganti node yang sudah ada berdasarkan ID
-    const updatedNodes = nodes.map((node) =>
-      node.id === updatedEmployeeNode.id ? updatedEmployeeNode : node
-    );
-
-    // Mencari dan mengganti edge yang sudah ada berdasarkan ID
-    const updatedEdges = edges.map((edge) =>
-      edge.id === updatedEdge.id ? updatedEdge : edge
-    );
-
-    setNodes(updatedNodes);
-    setEdges(updatedEdges);
-
-    // Terapkan auto layout setelah pembaruan karyawan
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(updatedNodes, updatedEdges);
-    setNodes(layoutedNodes);
-    setEdges(layoutedEdges);
-
-    // Menjalankan auto layout hanya sekali setelah edit
-    if (!layoutApplied.current) {
-      layoutApplied.current = true; // Tandai bahwa layout telah diterapkan
-    }
-  };
-  
   // Fungsi untuk menangani penambahan karyawan
   const handleAddEmployee = (newEmployeeNode, newEdge) => {
     const updatedNodes = [...nodes, newEmployeeNode]; // Menambahkan node baru
