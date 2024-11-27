@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form, Input, Select } from 'antd';
-import { nodes as initialNodes } from '../data/nodes-edges'; // Pastikan path-nya benar
+import { nodes as initialNodes } from '../data/NodesEdges'; // Pastikan path-nya benar
 
 const AddEmployeeModal = ({ onAddEmployee }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Menyimpan status modal

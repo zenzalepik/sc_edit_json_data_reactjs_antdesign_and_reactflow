@@ -1,6 +1,6 @@
 // src/contexts/OrgChartContext.js
 import React, { createContext, useContext, useRef, useState } from 'react';
-import { nodes as initialNodes, edges as initialEdges } from '../data/nodes-edges'; // Import data nodes dan edges
+import { nodes as initialNodes, edges as initialEdges } from '../data/NodesEdges'; // Import data nodes dan edges
 
 const OrgChartContext = createContext();
 

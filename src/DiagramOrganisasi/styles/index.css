@@ -22,3 +22,11 @@ body {
   font-family: sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Menghilangkan branding ReactFlow */
+.react-flow__logo,
+.react-flow__attribution {
+  display: none !important;
+}
+
+.c_hidden_element{display: none !important;}

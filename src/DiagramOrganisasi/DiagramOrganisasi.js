@@ -4,7 +4,7 @@ import EmployeeTable from "./form/EmployeeTable";
 import {
   nodes as initialNodes,
   edges as initialEdges,
-} from "./data/nodes-edges"; // Import data nodes dan edges
+} from "./data/NodesEdges"; // Import data nodes dan edges
 import { OrgChartProvider } from "./state/OrgChartContext";
 
 const StrukturOrganisasiPage = () => {
